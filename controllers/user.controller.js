@@ -10,8 +10,8 @@ exports.sendEmail = (req, res) => {
     host: 'smtp.gmail.com',
     port: 465,
     auth: {
-      user: 'send.email202209@gmail.com',
-      pass: 'zjjmeaxomtdmyjqf',
+      user: process.env.EMAIL,
+      pass: process.env.PASS,
     },
   });
 
@@ -38,5 +38,7 @@ exports.sendEmail = (req, res) => {
     },
   });
 
-  return res.status(201).send({ success: true, userID, email, mobileNo });
+  return res
+    .status(201)
+    .send({ success: true, message: 'Email sent successfullly!' });
 };
