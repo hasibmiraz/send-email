@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer');
+const hbs = require('nodemailer-express-handlebars');
+const path = require('path');
 
-exports.sendEmail = async (req, res) => {
+exports.sendEmail = (req, res) => {
   const { userID, email, mobileNo } = req.body;
 
   let transporter = nodemailer.createTransport({
@@ -13,11 +15,27 @@ exports.sendEmail = async (req, res) => {
     },
   });
 
-  await transporter.sendMail({
+  transporter.use(
+    'compile',
+    hbs({
+      viewEngine: {
+        extname: '.handlebars',
+        partialsDir: path.resolve('./views'),
+        defaultLayout: false,
+      },
+      viewPath: path.resolve('./views'),
+      extName: '.handlebars',
+    })
+  );
+
+  transporter.sendMail({
     from: 'apiassignment@snellcart.com',
     to: email,
     subject: 'Verify your email',
-    html: '<b>Hello world?</b>',
+    template: 'index',
+    context: {
+      email,
+    },
   });
 
   return res.status(201).send({ success: true, userID, email, mobileNo });
